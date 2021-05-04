@@ -25,18 +25,71 @@ const database = {
         { id: 4, metal: "Platinum", price: 795.45 },
         { id: 5, metal: "Palladium", price: 1241.0 }
     ],
-    customOrders: [
-        {
-            id: 1,
-            metalId: 3,
-            sizeId: 2,
-            styleId: 3,
-            timestamp: 1614659931693
-        }
-    ]
+    // an array of objects from user input, saved in final state via orderBuilder function
+    customOrders: [{
+        id: 1,
+        metalId: 3,
+        sizeId: 2,
+        styleId: 3,
+        timestamp: 1614659931693
+    }],
+    //object that holds transient state (current user's input)
+    orderBuilder: {}
 }
 
+// returns copies of current state to set it in database.orderBuilder
+export const setMetal = (id) => {
+    database.orderBuilder.metalId = id
+}
+
+export const setSize = (id) => {
+    database.orderBuilder.sizeId = id
+}
+
+export const setStyle = (id) => {
+        database.orderBuilder.styleId = id
+    }
+    // makes db copy available for import
 export const getMetals = () => {
     return [...database.metals]
 }
 
+export const getSizes = () => {
+    return [...database.sizes]
+}
+
+export const getStyles = () => {
+    return [...database.styles]
+}
+
+export const getOrders = () => {
+    return [...database.customOrders]
+}
+
+export const addCustomerOrder = () => {
+    const newOrder = {...database.orderBuilder }
+    newOrder.id = [...database.customOrders].pop().id + 1
+    newOrder.timestamp = Date.now()
+    database.customOrders.push(newOrder)
+    database.orderBuilder = {}
+    document.dispatchEvent(new CustomEvent("stateChanged"))
+}
+
+/* export const addCustomOrder = () => {
+    // Copy the current state of user choices
+    const newOrder = {...database.orderBuilder}
+
+    // Add a new primary key to the object
+    newOrder.id = [...database.customOrders].pop().id + 1
+
+    // Add a timestamp to the order
+    newOrder.timestamp = Date.now()
+
+    // Add the new order object to custom orders state
+    database.customOrders.push(newOrder)
+
+    // Reset the temporary state for user choices
+    database.orderBuilder = {}
+
+    // Broadcast a notification that permanent state has changed
+    document.dispatchEvent(new CustomEvent("stateChanged")) */
